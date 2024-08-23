@@ -1,23 +1,110 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { generateMnemonic } from 'bip39';
+import PasswordForm from './PasswordForm';
+import MnemonicDisplay from './MnemonicDisplay';
+import WalletDashboard from './WalletDashboard'; // Import WalletDashboard component
 
-function WalletDashboard() {
-  // Example public key, replace with actual logic
-  const publicKey = 'your-public-key-here';
+function Wallet() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [strength, setStrength] = useState('');
+  const [mnemonic, setMnemonic] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [view, setView] = useState('passwordForm'); // State to manage view
+
+  // Handler for password change
+  const handlePasswordChange = (newPassword) => {
+    setPassword(newPassword);
+    setError('');
+    assessPasswordStrength(newPassword);
+  };
+
+  // Handler for confirm password change
+  const handleConfirmPasswordChange = (newConfirmPassword) => {
+    setConfirmPassword(newConfirmPassword);
+    setError('');
+  };
+
+  // Assess password strength
+  const assessPasswordStrength = (password) => {
+    const lengthCriteria = password.length >= 8;
+    const upperCaseCriteria = /[A-Z]/.test(password);
+    const numberCriteria = /[0-9]/.test(password);
+    const specialCharCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (lengthCriteria && upperCaseCriteria && numberCriteria && specialCharCriteria) {
+      setStrength('Strong');
+    } else if (lengthCriteria && (upperCaseCriteria || numberCriteria)) {
+      setStrength('Moderate');
+    } else {
+      setStrength('Weak');
+    }
+  };
+
+  // Handler for wallet creation
+  const handleCreateWallet = (e) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+
+    const isPasswordLengthValid = password.length >= 8;
+    const isPasswordMatch = password === confirmPassword;
+
+    let errorMessage = '';
+
+    if (!isPasswordLengthValid) {
+      errorMessage = 'Password must be at least 8 characters long';
+    } else if (!isPasswordMatch) {
+      errorMessage = 'Passwords do not match';
+    }
+
+    if (errorMessage) {
+      setError(errorMessage);
+      setSuccess('');
+    } else {
+      setSuccess('Wallet created successfully!');
+      setError('');
+
+      // Generate mnemonic and reset form
+      const mnemonic = generateMnemonic();
+      setMnemonic(mnemonic);
+
+      setPassword('');
+      setConfirmPassword('');
+      setStrength('');
+      setFormSubmitted(false);
+      setView('mnemonic'); // Navigate to MnemonicDisplay view
+    }
+  };
+
+  // Handler for viewing the wallet
+  const handleViewWallet = () => {
+    setView('dashboard'); // Set view to WalletDashboard
+    console.log('Navigating to wallet dashboard');
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white animate-fade-in">
-      <h2 className="text-4xl font-extrabold mb-6 drop-shadow-lg">
-        Your Wallet
-      </h2>
-      <p className="text-xl mb-8 drop-shadow-lg">
-        Here are your wallet details.
-      </p>
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <p className="text-lg mb-4 font-semibold">Public Key:</p>
-        <pre className="bg-gray-700 p-4 rounded-lg overflow-x-auto text-gray-300">{publicKey}</pre>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-6 animate-fade-in">
+      {view === 'passwordForm' && (
+        <PasswordForm
+          password={password}
+          confirmPassword={confirmPassword}
+          error={error}
+          success={success}
+          strength={strength}
+          formSubmitted={formSubmitted}
+          onPasswordChange={handlePasswordChange}
+          onConfirmPasswordChange={handleConfirmPasswordChange}
+          onCreateWallet={handleCreateWallet}
+        />
+      )}
+      {view === 'mnemonic' && (
+        <MnemonicDisplay mnemonic={mnemonic} onViewWallet={handleViewWallet} />
+      )}
+      {view === 'dashboard' && <WalletDashboard />}
     </div>
   );
 }
 
-export default WalletDashboard;
+export default Wallet;
