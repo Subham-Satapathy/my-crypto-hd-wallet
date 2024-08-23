@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+/* Base background color for the footer to avoid flicker */
+footer {
+  background-color: #ff7f7f; /* Light red color for fallback */
+}
