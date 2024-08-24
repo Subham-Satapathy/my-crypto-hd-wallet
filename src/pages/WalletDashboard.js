@@ -1,42 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid'; // Import the arrow icon from Heroicons
+import WalletDetails from './WalletDetails'; // Import the new component
 
-function WalletDashboard({ wallets }) {
-  // Example wallets data, replace with actual logic
-  const walletData = wallets || [
-    { publicKey: 'your-public-key-1' },
-    { publicKey: 'your-public-key-2' },
-    { publicKey: 'your-public-key-3' }
-  ];
+function WalletDashboard({ wallets, onAddWallet }) {
+  const [selectedWallet, setSelectedWallet] = useState(null);
+  const [walletNumber, setWalletNumber] = useState(null);
+
+  const handleWalletClick = (wallet, index) => {
+    setSelectedWallet(wallet);
+    setWalletNumber(index + 1); // Set wallet number (1-based index)
+  };
+
+  const handleBackToDashboard = () => {
+    setSelectedWallet(null);
+    setWalletNumber(null);
+  };
+
+  if (selectedWallet) {
+    return (
+      <WalletDetails 
+        wallet={selectedWallet} 
+        onBack={handleBackToDashboard} 
+        walletNumber={walletNumber} 
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-white">
-      <h2 className="text-5xl font-extrabold mb-8 drop-shadow-lg text-center">
-        Your Wallets
-      </h2>
-      <p className="text-xl mb-10 drop-shadow-lg text-center max-w-lg">
-        Here are your wallet details. Keep them safe!
-      </p>
-      
-      <div className="bg-white bg-opacity-10 p-8 rounded-xl shadow-lg max-w-4xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {walletData.map((wallet, index) => (
-            <div
-              key={index}
-              className="bg-white bg-opacity-20 text-white p-6 rounded-lg text-center font-semibold shadow-md transition-transform transform hover:scale-105"
-            >
-              <p className="mb-4 text-lg font-bold">Wallet {index + 1}</p>
-              <pre className="bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm text-gray-300 font-mono break-all">
-                {wallet.publicKey}
-              </pre>
-              <button
-                onClick={() => navigator.clipboard.writeText(wallet.publicKey).then(() => alert('Public Key copied to clipboard!'))}
-                className="mt-4 py-2 px-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md"
-              >
-                Copy Public Key
-              </button>
-            </div>
-          ))}
+      <h2 className="text-4xl font-extrabold mb-6 drop-shadow-lg">Choose a wallet</h2>
+
+      <div className="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg max-w-2xl w-full">
+        <div className="mb-6">
+          {wallets.length > 0 ? (
+            <ul className="space-y-4">
+              {wallets.map((wallet, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleWalletClick(wallet, index)}
+                  className="bg-white bg-opacity-20 p-4 rounded-lg shadow-md text-white cursor-pointer hover:bg-opacity-30"
+                >
+                  <p className="text-sm font-medium">Wallet {index + 1}:</p>
+                  <p className="text-lg">SOL: {wallet.sol}</p>
+                  <p className="text-lg">ETH: {wallet.eth}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-white">No wallets available.</p>
+          )}
         </div>
+
+        <button
+          onClick={onAddWallet}
+          className="py-2 px-4 rounded-lg bg-gradient-to-r from-purple-500 via-pink-600 to-red-500 hover:from-purple-600 hover:via-pink-700 hover:to-red-600"
+        >
+          Add New Wallet
+        </button>
       </div>
     </div>
   );
