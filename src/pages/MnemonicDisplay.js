@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { mnemonicToSeed } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import { Keypair } from '@solana/web3.js';
@@ -11,6 +11,14 @@ function MnemonicDisplay({ mnemonic }) {
   const [isChecked, setIsChecked] = useState(false);
   const [wallets, setWallets] = useState([]);
   const [view, setView] = useState('form');
+  const [copyStatus, setCopyStatus] = useState('Copy to Clipboard'); // Add state for copy status
+  const [warning, setWarning] = useState(''); // Add state for warning message
+
+  useEffect(() => {
+    // Retrieve stored public keys from localStorage when the component mounts
+    const storedWallets = JSON.parse(localStorage.getItem('wallets')) || [];
+    setWallets(storedWallets);
+  }, []);
 
   const handleCheckboxChange = (e) => {
     setIsChecked(e.target.checked);
@@ -20,14 +28,21 @@ function MnemonicDisplay({ mnemonic }) {
     if (isChecked) {
       await generateInitialWallet();
       setView('wallet');
+      setWarning(''); // Clear any existing warnings
     } else {
-      alert('Please check the box before continuing.');
+      setWarning('Please check the box before continuing.');
     }
   };
 
   const handleCopyMnemonic = () => {
     navigator.clipboard.writeText(mnemonic)
-      .then(() => alert('Mnemonic copied to clipboard!'))
+      .then(() => {
+        setCopyStatus('Mnemonic copied!');
+        // Reset the button text back to original after 1 second
+        setTimeout(() => {
+          setCopyStatus('Copy to Clipboard');
+        }, 1000);
+      })
       .catch((err) => console.error('Failed to copy mnemonic:', err));
   };
 
@@ -47,8 +62,10 @@ function MnemonicDisplay({ mnemonic }) {
       const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
       const keypair = Keypair.fromSecretKey(secret);
 
-      // Set initial wallet
-      setWallets([{ sol: keypair.publicKey.toBase58(), eth: wallet.address }]);
+      // Set initial wallet and store in localStorage
+      const initialWallet = [{ sol: keypair.publicKey.toBase58(), eth: wallet.address }];
+      setWallets(initialWallet);
+      localStorage.setItem('wallets', JSON.stringify(initialWallet));
     } catch (err) {
       console.error('Failed to generate initial wallet:', err);
     }
@@ -71,7 +88,9 @@ function MnemonicDisplay({ mnemonic }) {
       const wallet = new Wallet(childEth.privateKey);
 
       // Add new wallet
-      setWallets([...wallets, { sol: keypair.publicKey.toBase58(), eth: wallet.address }]);
+      const newWallets = [...wallets, { sol: keypair.publicKey.toBase58(), eth: wallet.address }];
+      setWallets(newWallets);
+      localStorage.setItem('wallets', JSON.stringify(newWallets));
     } catch (err) {
       console.error('Failed to generate new wallet:', err);
     }
@@ -106,8 +125,12 @@ function MnemonicDisplay({ mnemonic }) {
               onClick={handleCopyMnemonic}
               className="py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
             >
-              Copy to Clipboard
+              {copyStatus}
             </button>
+
+            {warning && (
+              <div className="mt-4 text-yellow-500">{warning}</div>
+            )}
 
             <div className="mt-4 flex items-center">
               <input
@@ -124,7 +147,7 @@ function MnemonicDisplay({ mnemonic }) {
 
             <button
               onClick={handleContinue}
-              className="mt-6 py-2 px-4 rounded-lg bg-green-500 text-white hover:bg-green-600"
+              className="mt-6 py-2 px-4 rounded-lg bg-gradient-to-r from-purple-500 via-pink-600 to-red-500 hover:from-purple-600 hover:via-pink-700 hover:to-red-600"
             >
               View my wallet
             </button>
