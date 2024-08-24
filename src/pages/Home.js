@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
+import Modal from './Modal'; // Import the Modal component
 
 function Home({ onCreateWallet, onImportWallet }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(prevMode => !prevMode);
+  };
+
+  const handleImportWalletClick = () => {
+    // Show the modal when Import Wallet button is clicked
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false); // Hide the modal
   };
 
   return (
@@ -45,7 +56,7 @@ function Home({ onCreateWallet, onImportWallet }) {
           Create a new wallet
         </button>
         <button
-          onClick={onImportWallet}
+          onClick={handleImportWalletClick} // Show the warning modal
           className={`py-3 px-6 rounded-lg shadow-lg text-white transition-colors duration-300 ${
             isDarkMode
               ? 'bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 hover:from-gray-800 hover:via-gray-900 hover:to-gray-1000'
@@ -55,6 +66,14 @@ function Home({ onCreateWallet, onImportWallet }) {
           Import existing wallet
         </button>
       </div>
+
+      {/* Modal for warning message */}
+      {isModalVisible && (
+        <Modal
+          message="Feature coming soon, stay tuned!"
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }
