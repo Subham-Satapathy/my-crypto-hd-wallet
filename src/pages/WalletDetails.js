@@ -46,14 +46,16 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
         Back to Dashboard
       </button>
 
-      <div className="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg max-w-2xl w-full">
-        <h2 className="text-4xl font-extrabold mb-6 drop-shadow-lg">Wallet {walletNumber}</h2>
+      <div className="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <h2 className="text-4xl font-extrabold mb-6 drop-shadow-lg text-center sm:text-left">
+          Wallet {walletNumber}
+        </h2>
 
         <div className="bg-white bg-opacity-20 p-4 rounded-lg shadow-md text-white">
-          <div className="flex items-center mb-4">
-            <p className="text-lg flex items-center mr-10">
+          <div className="flex flex-col sm:flex-row items-center mb-4">
+            <p className="text-lg flex items-center mb-4 sm:mb-0 sm:mr-10">
               <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium mr-2">SOL</span>
-              {wallet.sol.trim()}
+              <span className="break-words">{wallet.sol.trim() || 'No SOL address available'}</span>
             </p>
             <div className="flex items-center">
               <ClipboardIcon
@@ -62,10 +64,10 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
               />
             </div>
           </div>
-          <div className="flex items-center mb-4">
-            <p className="text-lg flex items-center mr-10">
+          <div className="flex flex-col sm:flex-row items-center mb-4">
+            <p className="text-lg flex items-center mb-4 sm:mb-0 sm:mr-10">
               <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium mr-2">ETH</span>
-              {wallet.eth.trim()}
+              <span className="break-words">{wallet.eth.trim() || 'No ETH address available'}</span>
             </p>
             <div className="flex items-center">
               <ClipboardIcon
@@ -88,7 +90,7 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
         </div>
 
         {/* Copied message display */}
-        <div className="mt-4">
+        <div className="mt-4 text-center">
           {copyMessages.sol && (
             <p className="text-green-400">{copyMessages.sol}</p>
           )}

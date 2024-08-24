@@ -20,7 +20,7 @@ function PasswordForm({
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-900">
       <h2 className="text-4xl font-extrabold text-white mb-4 drop-shadow-lg">
         Create a password
       </h2>
