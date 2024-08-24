@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ArrowLeftIcon, ClipboardIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
+import Modal from './Modal'; // Import the Modal component
 
 function WalletDetails({ wallet, onBack, walletNumber }) {
   const [copyMessages, setCopyMessages] = useState({ sol: '', eth: '' });
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const copyToClipboard = (text, type) => {
     console.log(`Copying ${type} address: ${text}`); // Debugging line
@@ -26,6 +28,14 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
     })), 2000);
   };
 
+  const handleSendClick = () => {
+    setIsModalVisible(true); // Show the modal when Send button is clicked
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false); // Hide the modal
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-white">
       <button
@@ -41,7 +51,10 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
 
         <div className="bg-white bg-opacity-20 p-4 rounded-lg shadow-md text-white">
           <div className="flex items-center mb-4">
-            <p className="text-lg font-medium mr-10">SOL: {wallet.sol.trim()}</p>
+            <p className="text-lg flex items-center mr-10">
+              <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium mr-2">SOL</span>
+              {wallet.sol.trim()}
+            </p>
             <div className="flex items-center">
               <ClipboardIcon
                 className="h-6 w-6 cursor-pointer text-white hover:text-gray-300"
@@ -50,7 +63,10 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
             </div>
           </div>
           <div className="flex items-center mb-4">
-            <p className="text-lg font-medium mr-10">ETH: {wallet.eth.trim()}</p>
+            <p className="text-lg flex items-center mr-10">
+              <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium mr-2">ETH</span>
+              {wallet.eth.trim()}
+            </p>
             <div className="flex items-center">
               <ClipboardIcon
                 className="h-6 w-6 cursor-pointer text-white hover:text-gray-300"
@@ -61,7 +77,10 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
 
           {/* Add Send button below the wallet details box */}
           <div className="mt-6 flex justify-center">
-            <button className="flex items-center py-2 px-4 rounded-lg text-white bg-gradient-to-r from-purple-500 via-pink-600 to-red-500 hover:from-purple-600 hover:via-pink-700 hover:to-red-600">
+            <button
+              className="flex items-center py-2 px-4 rounded-lg text-white bg-gradient-to-r from-purple-500 via-pink-600 to-red-500 hover:from-purple-600 hover:via-pink-700 hover:to-red-600"
+              onClick={handleSendClick} // Handle click event
+            >
               <PaperAirplaneIcon className="h-6 w-6 mr-2" style={{ transform: 'rotate(0deg)' }} />
               Send
             </button>
@@ -78,6 +97,14 @@ function WalletDetails({ wallet, onBack, walletNumber }) {
           )}
         </div>
       </div>
+
+      {/* Modal for warning message */}
+      {isModalVisible && (
+        <Modal
+          message="Feature coming soon, stay tuned!"
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }

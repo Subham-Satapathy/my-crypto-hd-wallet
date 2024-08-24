@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Buffer } from 'buffer'; // Import Buffer from the buffer package
 import Home from './pages/Home';
 import Wallet from './pages/Wallet';
@@ -17,6 +17,16 @@ function App() {
   const [currentView, setCurrentView] = useState('home'); // State to manage current view
   const [mnemonic, setMnemonic] = useState(''); // State for mnemonic
 
+  useEffect(() => {
+    // Check if a hashed password is present in localStorage and navigate accordingly
+    const userPasswordHash = localStorage.getItem('userPasswordHash');
+    console.log(`userPasswordHash: ${userPasswordHash}`); // Debug log
+    
+    // if (userPasswordHash) {
+    //   setCurrentView('dashboard'); // Redirect to WalletDashboard if hash exists
+    // }
+  }, []); // Empty dependency array to run only once on mount
+
   const handleCreateWallet = () => {
     setCurrentView('wallet'); // Navigate to Wallet view
   };
@@ -32,10 +42,7 @@ function App() {
 
   const handleViewWallet = () => {
     setCurrentView('dashboard'); // Navigate to WalletDashboard view
-    console.log('handleViewWallet function called'); // Debug log
   };
-  
-  
 
   return (
     <div className="App">

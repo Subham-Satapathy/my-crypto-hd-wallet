@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { generateMnemonic } from 'bip39';
+import bcrypt from 'bcryptjs'; // Import bcryptjs for hashing
 import PasswordForm from './PasswordForm';
 import MnemonicDisplay from './MnemonicDisplay';
-import WalletDashboard from './WalletDashboard'; // Import WalletDashboard component
+import WalletDashboard from './WalletDashboard';
 
 function Wallet() {
   const [password, setPassword] = useState('');
@@ -12,7 +13,7 @@ function Wallet() {
   const [strength, setStrength] = useState('');
   const [mnemonic, setMnemonic] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [view, setView] = useState('passwordForm'); // State to manage view
+  const [view, setView] = useState('passwordForm');
 
   // Handler for password change
   const handlePasswordChange = (newPassword) => {
@@ -44,7 +45,7 @@ function Wallet() {
   };
 
   // Handler for wallet creation
-  const handleCreateWallet = (e) => {
+  const handleCreateWallet = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
@@ -70,6 +71,10 @@ function Wallet() {
       const mnemonic = generateMnemonic();
       setMnemonic(mnemonic);
 
+      // Hash password and store in localStorage
+      const hashedPassword = await bcrypt.hash(password, 10);
+      localStorage.setItem('userPasswordHash', hashedPassword);
+
       setPassword('');
       setConfirmPassword('');
       setStrength('');
@@ -80,8 +85,7 @@ function Wallet() {
 
   // Handler for viewing the wallet
   const handleViewWallet = () => {
-    setView('dashboard'); // Set view to WalletDashboard
-    console.log('Navigating to wallet dashboard');
+    setView('dashboard');
   };
 
   return (

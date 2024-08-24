@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'; // Import the arrow icon from Heroicons
 import WalletDetails from './WalletDetails'; // Import the new component
 
 function WalletDashboard({ wallets, onAddWallet }) {
@@ -42,8 +41,16 @@ function WalletDashboard({ wallets, onAddWallet }) {
                   className="bg-white bg-opacity-20 p-4 rounded-lg shadow-md text-white cursor-pointer hover:bg-opacity-30"
                 >
                   <p className="text-sm font-medium">Wallet {index + 1}:</p>
-                  <p className="text-lg">SOL: {wallet.sol.trim()}</p> {/* Trim whitespace */}
-                  <p className="text-lg">ETH: {wallet.eth.trim()}</p> {/* Trim whitespace */}
+                  <div className="mt-2">
+                    <p className="text-lg flex items-center">
+                      <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium mr-2">SOL</span>
+                      {wallet.sol.trim()}
+                    </p>
+                    <p className="text-lg flex items-center mt-1">
+                      <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium mr-2">ETH</span>
+                      {wallet.eth.trim()}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>

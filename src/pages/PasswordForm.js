@@ -11,8 +11,13 @@ function PasswordForm({
   onConfirmPasswordChange,
   onCreateWallet
 }) {
-  // Passwords should match and password should meet minimum length criteria to enable the button
   const isFormValid = password === confirmPassword && password.length >= 8;
+
+  // Correctly handle form submission
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent default form submission
+    onCreateWallet(event); // Call the function passed via props with the event object
+  };
 
   return (
     <div>
@@ -23,7 +28,7 @@ function PasswordForm({
         You will use this password to unlock your wallet.
       </p>
       <form
-        onSubmit={onCreateWallet}
+        onSubmit={handleSubmit} // Ensure this is handling the submit event
         className="bg-white bg-opacity-80 p-6 rounded-lg shadow-lg w-full max-w-md"
       >
         <div className="mb-4">
