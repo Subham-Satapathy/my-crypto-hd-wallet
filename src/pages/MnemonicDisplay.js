@@ -75,7 +75,7 @@ function MnemonicDisplay({ mnemonic, onViewWallet }) {
           onClick={handleContinue}
           className="mt-6 py-2 px-4 rounded-lg bg-green-500 text-white hover:bg-green-600"
         >
-          Continue
+          View my wallet
         </button>
       </div>
     </div>
