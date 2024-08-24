@@ -7,6 +7,7 @@ function WalletDashboard({ wallets, onAddWallet }) {
   const [walletNumber, setWalletNumber] = useState(null);
 
   const handleWalletClick = (wallet, index) => {
+    console.log(`Selected Wallet: ${JSON.stringify(wallet)}`); // Debugging line
     setSelectedWallet(wallet);
     setWalletNumber(index + 1); // Set wallet number (1-based index)
   };
@@ -41,8 +42,8 @@ function WalletDashboard({ wallets, onAddWallet }) {
                   className="bg-white bg-opacity-20 p-4 rounded-lg shadow-md text-white cursor-pointer hover:bg-opacity-30"
                 >
                   <p className="text-sm font-medium">Wallet {index + 1}:</p>
-                  <p className="text-lg">SOL: {wallet.sol}</p>
-                  <p className="text-lg">ETH: {wallet.eth}</p>
+                  <p className="text-lg">SOL: {wallet.sol.trim()}</p> {/* Trim whitespace */}
+                  <p className="text-lg">ETH: {wallet.eth.trim()}</p> {/* Trim whitespace */}
                 </li>
               ))}
             </ul>
